@@ -18,7 +18,6 @@ flake8 --config .flake8 "${targets[@]}"
 isort --settings-path .isort.cfg --check --diff "${targets[@]}"
 
 # Static type checker (https://mypy.readthedocs.io)
-# Split commands due to https://github.com/python/mypy/issues/4008
 mypy --config-file .mypy.ini "${targets[@]}"
 
 # Check for errors, enforce a coding standard, look for code smells (http://pylint.pycqa.org)

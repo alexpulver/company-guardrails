@@ -1,37 +1,58 @@
 import importlib
-from typing import Any, Dict, cast
+from typing import Any, Dict, Optional, Sequence, cast
 
 
-def update(props: Any, other_props: Any) -> Any:
-    props_module_name = _get_module_name(props)
-    props_class_name = _get_class_name(props)
-    props_absolute_name = _get_absolute_name(props_module_name, props_class_name)
+def merge(props: Sequence[Any], overrides: Optional[Any]) -> Any:
+    merged_props_dict: Dict[str, Any] = {}
+    overrides_props_dict = to_dict(overrides)
 
-    other_props_module_name = _get_module_name(other_props)
-    other_props_class_name = _get_class_name(other_props)
-    other_props_absolute_name = _get_absolute_name(
-        other_props_module_name, other_props_class_name
-    )
+    _check_type_match(props, overrides)
+    for index, props_obj in enumerate(props):
+        props_dict = to_dict(props_obj)
+        _check_conflicts(props_dict, index, merged_props_dict, overrides_props_dict)
+        merged_props_dict.update(props_dict)
+    merged_props_dict.update(overrides_props_dict)
 
-    # pylint: disable=unidiomatic-typecheck
-    if type(props) != type(other_props):
-        raise ValueError(
-            f"type mismatch between props: "
-            f"'{props_absolute_name}', '{other_props_absolute_name}'"
-        )
-
-    props_dict = to_dict(props)
-    other_props_dict = to_dict(other_props)
-    props_dict.update(other_props_dict)
-
+    props_module_name = _get_module_name(props[0])
+    props_class_name = _get_class_name(props[0])
     props_module = importlib.import_module(props_module_name)
     props_class = getattr(props_module, props_class_name)
-    updated_props = props_class(**props_dict)
-    return updated_props
+    merged_props_obj = props_class(**merged_props_dict)
+    return merged_props_obj
 
 
 def to_dict(props: Any) -> Dict[str, Any]:
+    if props is None:
+        return {}
     return cast(Dict[str, Any], vars(props).copy()["_values"])
+
+
+def _check_type_match(props: Any, overrides: Optional[Any]) -> None:
+    if overrides is None:
+        props_types = {type(props_obj) for props_obj in props}
+    else:
+        props_types = {type(props_obj) for props_obj in props + [overrides]}
+    if len(props_types) > 1:
+        raise ValueError(f"type mismatch between props: {props_types}")
+
+
+def _check_conflicts(
+    props_dict: Dict[str, Any],
+    index: int,
+    merged_props_dict: Dict[str, Any],
+    overrides_props_dict: Dict[str, Any],
+) -> None:
+    for prop in props_dict:
+        if (
+            prop in merged_props_dict
+            and props_dict[prop] != merged_props_dict[prop]
+            and prop not in overrides_props_dict
+        ):
+            raise ValueError(
+                f"Props object at index {index} includes '{prop}' prop with value "
+                f"'{props_dict[prop]}'. It was defined by previous props object(s) "
+                f"with value '{merged_props_dict[prop]}' and is not in overrides"
+            )
 
 
 def _get_module_name(props: Any) -> str:
