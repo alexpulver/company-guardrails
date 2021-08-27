@@ -44,8 +44,10 @@ pip-sync requirements.txt requirements-dev.txt
 
 ## Run compliance checks
 The checks are performed using [cdk-nag](https://github.com/cdklabs/cdk-nag) library
+when synthesizing the application.
+
 ```bash
-npx cdk synth -a "python compcheck.py"
+npx cdk synth
 ```
 
 If `cdk-nag` finds issues, you can use company's policy library to remediate, 
