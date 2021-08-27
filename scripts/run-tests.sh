@@ -3,7 +3,7 @@
 set -o errexit
 set -o verbose
 
-targets=(company_cdk_security website app.py cdk_props.py constants.py deployment.py)
+targets=(company_cdk_security website app.py cdk_props.py compcheck.py constants.py deployment.py)
 
 # Find common security issues (https://bandit.readthedocs.io)
 bandit --recursive "${targets[@]}"

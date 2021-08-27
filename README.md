@@ -23,10 +23,6 @@ pip install pip-tools==6.2.0
 ```
 
 ### [Optional] Upgrade AWS CDK Toolkit version
-**Note:** If you are planning to upgrade dependencies, first push the upgraded AWS CDK Toolkit version.
-See [(pipelines): Fail synth if pinned CDK CLI version is older than CDK library version](https://github.com/aws/aws-cdk/issues/15519) 
-for more details.
-
 ```bash
 vi package.json  # Update "aws-cdk" package version
 ./scripts/install-deps.sh
@@ -42,9 +38,23 @@ pip-compile --upgrade requirements.in
 pip-compile --upgrade requirements-dev.in
 ./scripts/install-deps.sh
 # [Optional] Cleanup unused packages
-pip-sync api/runtime/requirements.txt requirements.txt requirements-dev.txt
+pip-sync requirements.txt requirements-dev.txt
 ./scripts/run-tests.sh
 ```
+
+## Run compliance checks
+The checks are performed using [cdk-nag](https://github.com/cdklabs/cdk-nag) library
+```bash
+npx cdk synth -a "python compcheck.py"
+```
+
+If `cdk-nag` finds issues, you can use company's policy library to remediate, 
+or suppress the rule if needed. Follow the instructions in `cdk-nag` webpage 
+for how to suppress a rule.
+
+See [website infrastructure](website/infrastructure.py) construct for an example
+of applying NIST 800-53 rules to the website bucket, while suppressing the rule
+for the logs bucket used to make the website bucket compliant.
 
 ## Deploy the component to development environment
 The `LandingPageFrontend-Dev` stack uses your default AWS account and region.

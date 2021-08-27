@@ -1,11 +1,4 @@
-from aws_cdk import core as cdk
+from helpers import create_app
 
-import constants
-from deployment import LandingPageFrontend
-
-app = cdk.App()
-
-# Development stack
-LandingPageFrontend(app, f"{constants.CDK_APP_NAME}-Dev", env=constants.DEV_ENV)
-
+app = create_app()
 app.synth()

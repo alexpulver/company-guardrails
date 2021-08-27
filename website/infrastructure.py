@@ -1,3 +1,5 @@
+from typing import cast
+
 from aws_cdk import aws_s3 as s3
 from aws_cdk import core as cdk
 
@@ -9,10 +11,26 @@ class Website(cdk.Construct):
     def __init__(self, scope: cdk.Construct, id_: str):
         super().__init__(scope, id_)
 
+        logs_bucket = s3.Bucket(self, "LogsBucket")
+        cfn_logs_bucket = cast(s3.CfnBucket, logs_bucket.node.default_child)
+        cfn_logs_bucket.add_metadata(
+            "cdk_nag",
+            {
+                "rules_to_suppress": [
+                    {
+                        "id": "NIST.800.53-S3BucketLoggingEnabled",
+                        "reason": "This is the logging bucket itself",
+                    },
+                ],
+            },
+        )
         bucket_props = cdk_props.merge(
             props=[
                 security_s3.BucketPropsCollection.public_access(),
                 security_s3.BucketPropsCollection.fedramp_moderate(),
+                security_s3.BucketPropsCollection.nist80053(
+                    server_access_logs_bucket=logs_bucket
+                ),
             ],
             overrides=s3.BucketProps(versioned=True, public_read_access=True),
         )
