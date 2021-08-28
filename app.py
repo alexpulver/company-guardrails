@@ -1,13 +1,20 @@
+import os
+
 from aws_cdk import core as cdk
 from cdk_nag import NIST80053Checks
 
-import constants
 from deployment import LandingPageFrontend
 
 app = cdk.App()
 
-# Development stack
-LandingPageFrontend(app, f"{constants.CDK_APP_NAME}-Dev", env=constants.DEV_ENV)
+LandingPageFrontend(
+    app,
+    "LandingPageFrontend",
+    env=cdk.Environment(
+        account=os.environ["CDK_DEFAULT_ACCOUNT"],
+        region=os.environ["CDK_DEFAULT_REGION"],
+    ),
+)
 
 cdk.Aspects.of(app).add(NIST80053Checks())
 
