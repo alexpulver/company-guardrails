@@ -4,7 +4,9 @@ from aws_cdk import aws_s3 as s3
 from aws_cdk import core as cdk
 
 import cdk_props
-from company_cdk_security import aws_s3 as security_s3
+from company_cdk import appsec
+from company_cdk import fedramp
+from company_cdk import nist80053
 
 
 class Website(cdk.Construct):
@@ -26,9 +28,9 @@ class Website(cdk.Construct):
         )
         bucket_props = cdk_props.merge(
             props=[
-                security_s3.BucketPropsCollection.public_access(),
-                security_s3.BucketPropsCollection.fedramp_moderate(),
-                security_s3.BucketPropsCollection.nist80053(
+                appsec.PropsCollection.aws_s3_public_access(),
+                fedramp.PropsCollection.aws_s3(),
+                nist80053.PropsCollection.aws_s3(
                     server_access_logs_bucket=logs_bucket
                 ),
             ],
