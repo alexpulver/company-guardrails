@@ -28,9 +28,9 @@ class Website(cdk.Construct):
         )
         bucket_props = cdk_props.merge(
             props=[
-                appsec.PropsCollection.aws_s3_public_access(),
-                fedramp.PropsCollection.aws_s3(),
-                nist80053.PropsCollection.aws_s3(
+                appsec.PropsCollection.aws_s3_bucket_public_access(),
+                fedramp.PropsCollection.aws_s3_bucket(),
+                nist80053.PropsCollection.aws_s3_bucket(
                     server_access_logs_bucket=logs_bucket
                 ),
             ],
