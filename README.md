@@ -59,15 +59,15 @@ of applying NIST 800-53 rules to the website bucket, while suppressing the rule
 for the logs bucket used to make the website bucket compliant.
 
 ## Deploy the component to development environment
-The `LandingPageFrontend-Dev` stack uses your default AWS account and region.
+The `LandingPageFrontend` stack uses your default AWS account and region.
 
 ```bash
-npx cdk deploy LandingPageFrontend-Dev
+npx cdk deploy LandingPageFrontend
 ```
 
 ## Delete the component
 **Do not forget to delete the component to avoid unexpected charges**
 
 ```bash
-npx cdk destroy LandingPageFrontend-Dev
+npx cdk destroy LandingPageFrontend
 ```
