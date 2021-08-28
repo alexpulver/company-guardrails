@@ -2,7 +2,7 @@ import importlib
 from typing import Any, Dict, Optional, Sequence, cast
 
 
-def merge(props: Sequence[Any], overrides: Optional[Any]) -> Any:
+def merge(props: Sequence[Any], *, overrides: Optional[Any]) -> Any:
     merged_props_dict: Dict[str, Any] = {}
     overrides_props_dict = to_dict(overrides)
 

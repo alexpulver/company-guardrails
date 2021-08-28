@@ -27,7 +27,7 @@ class Website(cdk.Construct):
             },
         )
         bucket_props = cdk_props.merge(
-            props=[
+            [
                 appsec.PropsCollection.aws_s3_bucket_public_access(),
                 fedramp.PropsCollection.aws_s3_bucket(),
                 nist80053.PropsCollection.aws_s3_bucket(
